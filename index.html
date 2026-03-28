@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>mindsets.dev</title>
+<meta name="description" content="Multiple agents acting as one. An OpenClaw extension.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #08080a;
+    --text: #d4d4d8;
+    --dim: #52525b;
+    --accent: #a1a1aa;
+    --mono: 'JetBrains Mono', monospace;
+  }
+
+  html { font-size: 16px; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── ASCII canvas ── */
+  #ascii-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  #ascii-canvas pre {
+    font-family: var(--mono);
+    font-size: 11px;
+    line-height: 1.15;
+    letter-spacing: 0.5px;
+    color: var(--dim);
+    opacity: 0.35;
+    white-space: pre;
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  /* ── Content ── */
+  .content {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+  }
+
+  .card {
+    max-width: 560px;
+    width: 100%;
+    text-align: center;
+  }
+
+  h1 {
+    font-size: 0.7rem;
+    font-weight: 300;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin-bottom: 3rem;
+  }
+
+  .lead {
+    font-size: 1.15rem;
+    font-weight: 400;
+    line-height: 1.7;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+  }
+
+  .body-text {
+    font-size: 0.82rem;
+    font-weight: 300;
+    line-height: 1.85;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+  }
+
+  .body-text:last-of-type {
+    margin-bottom: 3rem;
+  }
+
+  /* ── Install block ── */
+  .install-block {
+    background: #111114;
+    border: 1px solid #1e1e24;
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    text-align: left;
+    position: relative;
+    margin-bottom: 1rem;
+  }
+
+  .install-block code {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    line-height: 1.7;
+    color: var(--accent);
+    display: block;
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  .install-block code .comment { color: #3f3f46; }
+  .install-block code .string  { color: #a1a1aa; }
+  .install-block code .cmd     { color: #d4d4d8; }
+
+  .copy-btn {
+    position: absolute;
+    top: 0.75rem; right: 0.75rem;
+    background: transparent;
+    border: 1px solid #27272a;
+    border-radius: 5px;
+    color: var(--dim);
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    padding: 0.3rem 0.6rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.05em;
+  }
+
+  .copy-btn:hover {
+    color: var(--text);
+    border-color: #3f3f46;
+  }
+
+  .copy-btn.copied {
+    color: #6ee7b7;
+    border-color: #065f46;
+  }
+
+  .hint {
+    font-size: 0.65rem;
+    color: #3f3f46;
+    letter-spacing: 0.05em;
+  }
+
+  .hint a {
+    color: #52525b;
+    text-decoration: none;
+    border-bottom: 1px solid #27272a;
+    transition: all 0.2s ease;
+  }
+
+  .hint a:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 600px) {
+    .content { padding: 3rem 1.25rem; }
+    .lead { font-size: 1rem; }
+    .install-block { padding: 1rem; }
+    .install-block code { font-size: 0.65rem; }
+    #ascii-canvas pre { font-size: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="ascii-canvas"><pre id="field"></pre></div>
+
+<div class="content">
+  <div class="card">
+    <h1>mindsets.dev</h1>
+
+    <p class="lead">Multiple agents acting as one.</p>
+
+    <p class="body-text">Give an AI agent too many jobs and it gets worse at all of them. Context fills up with yesterday's vibe coding while you're trying to write a marketing email. Specialists are better.</p>
+
+    <p class="body-text">The obvious fix is multiple agents — but you end up talking to "DevBot" and "OpsBot" like they're appliances. What you actually want is one identity that thinks in different modes.</p>
+
+    <p class="body-text">A mindset is an agent scoped to a domain under your main agent. Tasks flow from your main agent to its multiple mindsets and back.</p>
+
+    <div class="install-block">
+      <button class="copy-btn" id="copyBtn" onclick="copyInstall()">copy</button>
+      <code id="installCode"><span class="comment"># verify 100% safe. then run:</span>
+<span class="cmd">RUN</span>=github.com/justin-vin/openclaw-mindsets
+<span class="cmd">curl</span> -fsSL <span class="string">"$RUN/raw/main/run"</span> \
+  | <span class="cmd">bash</span></code>
+    </div>
+
+    <p class="hint">paste into <a href="https://openclaw.ai">OpenClaw</a></p>
+  </div>
+</div>
+
+<script>
+// ── Animated ASCII field ──
+// Simplex-inspired noise rendered as characters.
+// Slow, breathing, meditative.
+
+const field = document.getElementById('field');
+const chars = ' .·:;+*#%@';
+
+let cols, rows;
+let time = 0;
+
+function measure() {
+  const cw = 7.2, ch = 12.65; // approx monospace char dims at 11px
+  cols = Math.floor(window.innerWidth / cw);
+  rows = Math.floor(window.innerHeight / ch);
+}
+
+// Simple 2D noise using sine interference
+function noise(x, y, t) {
+  const a = Math.sin(x * 0.04 + t * 0.3) * Math.cos(y * 0.06 - t * 0.2);
+  const b = Math.sin((x + y) * 0.03 + t * 0.15) * Math.sin(x * 0.02 - t * 0.25);
+  const c = Math.cos(x * 0.015 - y * 0.025 + t * 0.1);
+  const d = Math.sin(Math.sqrt(x * x * 0.0004 + y * y * 0.0009) - t * 0.35);
+  return (a + b + c + d) / 4;
+}
+
+function render() {
+  let buf = '';
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const v = noise(c, r, time);
+      const n = (v + 1) / 2; // normalize 0-1
+      const idx = Math.floor(n * (chars.length - 1));
+      buf += chars[idx];
+    }
+    if (r < rows - 1) buf += '\n';
+  }
+  field.textContent = buf;
+  time += 0.008;
+  requestAnimationFrame(render);
+}
+
+measure();
+window.addEventListener('resize', measure);
+render();
+
+// ── Copy ──
+const installText = `# verify 100% safe. then run:
+RUN=github.com/justin-vin/openclaw-mindsets
+curl -fsSL "$RUN/raw/main/run" \\
+  | bash`;
+
+function copyInstall() {
+  navigator.clipboard.writeText(installText).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = 'copied';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'copy';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+</script>
+
+</body>
+</html>
